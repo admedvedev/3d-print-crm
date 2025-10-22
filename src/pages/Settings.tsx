@@ -184,7 +184,7 @@ const Settings = () => {
       </div>
 
       {/* Панель администратора - показываем только для админа */}
-      {user?.email === "admin@example.com" && (
+      {user?.email === "andybear@3dcrm.com" && (
         <AdminPanel />
       )}
     </div>

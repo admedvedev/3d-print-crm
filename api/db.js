@@ -3,8 +3,8 @@ let db = {
   users: [
     {
       id: "1",
-      email: "admin@example.com",
-      password: "admin123",
+      email: "andybear@3dcrm.com",
+      password: "pass111word",
       name: "Администратор",
       createdAt: "2024-01-01T00:00:00.000Z"
     }

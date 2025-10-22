@@ -117,14 +117,6 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         </p>
       </div>
 
-      <div className="mt-4 p-3 bg-muted rounded-lg">
-        <p className="text-xs text-muted-foreground text-center">
-          <strong>Доступные аккаунты:</strong><br />
-          • admin@example.com / admin123<br />
-          • i@andybear.ru / dojki9698<br />
-          • medved.xd095@gmail.com / dojki9698
-        </p>
-      </div>
     </Card>
   );
 }

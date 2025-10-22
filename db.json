@@ -2,31 +2,10 @@
   "users": [
     {
       "id": "1",
-      "email": "admin@example.com",
-      "password": "admin123",
+      "email": "andybear@3dcrm.com",
+      "password": "pass111word",
       "name": "Администратор",
       "createdAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
-      "id": "ae629d71-5395-4509-ae90-e2ebd5ecae25",
-      "email": "i@andybear.ru",
-      "password": "dojki9698",
-      "name": "Медведев Андрей Дмитриевич",
-      "createdAt": "2025-10-22T17:42:05.642Z"
-    },
-    {
-      "id": "55c1a30a-7bcd-4754-9c37-d7a54bfe5add",
-      "email": "medved.xd095@gmail.com",
-      "password": "dojki9698",
-      "name": "ANDREY MEDVEDEV",
-      "createdAt": "2025-10-22T17:42:43.632Z"
-    },
-    {
-      "id": "b725b50a-3b35-4bf2-97c3-9881d722b83e",
-      "email": "MargooFish@ya.ru",
-      "password": "йцукен123",
-      "name": "Медведева Ксения",
-      "createdAt": "2025-10-22T17:48:05.833Z"
     }
   ],
   "printers": [
