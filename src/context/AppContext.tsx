@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { AppState, Printer, Filament, Client, Order } from "@/types";
-import { apiService } from "@/lib/api";
+import { apiService } from "@/lib/api-vercel";
 
 interface AppContextType extends AppState {
   addPrinter: (printer: Omit<Printer, "id">) => void;
