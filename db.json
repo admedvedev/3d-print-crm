@@ -1,0 +1,92 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "admin@example.com",
+      "password": "admin123",
+      "name": "Администратор",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ae629d71-5395-4509-ae90-e2ebd5ecae25",
+      "email": "i@andybear.ru",
+      "password": "dojki9698",
+      "name": "Медведев Андрей Дмитриевич",
+      "createdAt": "2025-10-22T17:42:05.642Z"
+    },
+    {
+      "id": "55c1a30a-7bcd-4754-9c37-d7a54bfe5add",
+      "email": "medved.xd095@gmail.com",
+      "password": "dojki9698",
+      "name": "ANDREY MEDVEDEV",
+      "createdAt": "2025-10-22T17:42:43.632Z"
+    },
+    {
+      "id": "b725b50a-3b35-4bf2-97c3-9881d722b83e",
+      "email": "MargooFish@ya.ru",
+      "password": "йцукен123",
+      "name": "Медведева Ксения",
+      "createdAt": "2025-10-22T17:48:05.833Z"
+    }
+  ],
+  "printers": [
+    {
+      "id": "1",
+      "userId": "1",
+      "name": "Prusa i3 MK3S",
+      "power": 220,
+      "cost": 25000,
+      "depreciation": 10,
+      "totalHours": 150
+    }
+  ],
+  "filaments": [
+    {
+      "id": "1",
+      "userId": "1",
+      "name": "PLA Базовый",
+      "weight": 1,
+      "cost": 800,
+      "color": "#FF6B6B",
+      "inStock": true
+    }
+  ],
+  "clients": [
+    {
+      "id": "1",
+      "userId": "1",
+      "name": "Иванов И.И.",
+      "email": "ivanov@example.com",
+      "phone": "+7 (999) 123-45-67"
+    }
+  ],
+  "orders": [
+    {
+      "id": "1",
+      "userId": "1",
+      "taskName": "Тестовое задание",
+      "clientId": "1",
+      "clientName": "Иванов И.И.",
+      "printerId": "1",
+      "printerName": "Prusa i3 MK3S",
+      "filamentId": "1",
+      "filamentName": "PLA Базовый",
+      "printTimeHours": 2,
+      "printTimeMinutes": 30,
+      "weight": 50,
+      "markup": 20,
+      "status": "completed",
+      "cost": 1250.5,
+      "date": "2024-01-15"
+    }
+  ],
+  "settings": [
+    {
+      "id": "1",
+      "userId": "1",
+      "electricityRate": 5.5,
+      "currency": "₽",
+      "defaultMarkup": 20
+    }
+  ]
+}
