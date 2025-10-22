@@ -1,7 +1,7 @@
 // API service for Vercel deployment
 const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
-  ? 'https://3d-print-crm.vercel.app/'
-  : '/api';
+  ? 'http://localhost:3000/api'
+  : 'https://your-app-name.vercel.app/api';
 
 export interface ApiResponse<T> {
   data: T;
