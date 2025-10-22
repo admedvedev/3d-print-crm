@@ -8,6 +8,7 @@ import { AppProvider } from "@/context/AppContext";
 import { PageProvider } from "@/context/PageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AuthPage } from "@/components/auth/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import Calculator from "./pages/Calculator";
 import Orders from "./pages/Orders";
@@ -21,21 +22,25 @@ const queryClient = new QueryClient();
 
 const AppRoutes = () => (
   <BrowserRouter>
-    <ProtectedRoute>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/calculator" element={<Calculator />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/printers" element={<Printers />} />
-          <Route path="/filaments" element={<Filaments />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/settings" element={<Settings />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
-    </ProtectedRoute>
+    <Routes>
+      <Route path="/login" element={<AuthPage />} />
+      <Route path="*" element={
+        <ProtectedRoute>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/calculator" element={<Calculator />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/printers" element={<Printers />} />
+              <Route path="/filaments" element={<Filaments />} />
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </ProtectedRoute>
+      } />
+    </Routes>
   </BrowserRouter>
 );
 
