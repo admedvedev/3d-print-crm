@@ -6,7 +6,7 @@ const isVercel = process.env.VERCEL === '1';
 export async function getApiService() {
   if (isProduction || isVercel) {
     // Use Vercel API for production
-    const { apiService } = await import('./api-vercel');
+    const { apiService } = await import('./api-unified');
     return apiService;
   } else {
     // Use local JSON Server for development
