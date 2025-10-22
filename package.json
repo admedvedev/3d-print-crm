@@ -11,7 +11,6 @@
     "preview": "vite preview",
     "db": "json-server --watch db.json --port 3001",
     "start": "concurrently \"npm run db\" \"npm run dev\"",
-    "vercel-build": "vite build",
     "vercel-dev": "vercel dev"
   },
   "dependencies": {
