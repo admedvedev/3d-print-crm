@@ -46,11 +46,15 @@ export default async function handler(req, res) {
           if (result.rows.length === 0) {
             return res.status(404).json({ error: `${table} not found` });
           }
-          res.status(200).json(result.rows[0]);
+          // Convert numeric fields to numbers
+          const processedRow = convertNumericFields(result.rows[0], table);
+          res.status(200).json(processedRow);
         } else {
           // Get all records
           const result = await sql.query(`SELECT * FROM ${table} ORDER BY created_at DESC`);
-          res.status(200).json(result.rows);
+          // Convert numeric fields to numbers
+          const processedRows = result.rows.map(row => convertNumericFields(row, table));
+          res.status(200).json(processedRows);
         }
         break;
         
@@ -114,7 +118,8 @@ async function createRecord(table, data) {
         `INSERT INTO users (id, email, password, name, created_at) VALUES ($1, $2, $3, $4, $5)`,
         [id, email, password, name, createdAt]
       );
-      return { id, email, password, name, created_at: createdAt };
+      const newUser = { id, email, password, name, created_at: createdAt };
+      return convertNumericFields(newUser, 'users');
       
     default:
       throw new Error(`Table ${table} not supported for creation yet`);
@@ -130,7 +135,7 @@ async function updateRecord(table, id, data) {
         `UPDATE users SET email = $1, password = $2, name = $3 WHERE id = $4 RETURNING *`,
         [email, password, name, id]
       );
-      return userResult.rows.length > 0 ? userResult.rows[0] : null;
+      return userResult.rows.length > 0 ? convertNumericFields(userResult.rows[0], 'users') : null;
       
     default:
       throw new Error(`Table ${table} not supported for update yet`);
@@ -141,4 +146,34 @@ async function updateRecord(table, id, data) {
 async function deleteRecord(table, id) {
   const result = await sql.query(`DELETE FROM ${table} WHERE id = $1 RETURNING *`, [id]);
   return result.rows.length > 0;
+}
+
+// Функция преобразования строковых числовых полей в числа
+function convertNumericFields(row, table) {
+  if (!row) return row;
+  
+  const processedRow = { ...row };
+  
+  // Определяем числовые поля для каждой таблицы
+  const numericFields = {
+    users: [],
+    printers: ['power', 'cost', 'depreciation', 'total_hours'],
+    filaments: ['weight', 'cost'],
+    clients: [],
+    orders: ['print_time_hours', 'print_time_minutes', 'weight', 'markup', 'cost'],
+    settings: ['electricity_rate', 'default_markup']
+  };
+  
+  const fields = numericFields[table] || [];
+  
+  fields.forEach(field => {
+    if (processedRow[field] !== null && processedRow[field] !== undefined) {
+      const numValue = parseFloat(processedRow[field]);
+      if (!isNaN(numValue)) {
+        processedRow[field] = numValue;
+      }
+    }
+  });
+  
+  return processedRow;
 }
