@@ -166,6 +166,16 @@ export const apiService = {
     return response.json();
   },
 
+  async createSettings(settings: any) {
+    const response = await fetch(`${API_BASE_URL}/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings),
+    });
+    if (!response.ok) throw new Error('Failed to create settings');
+    return response.json();
+  },
+
   async updateSettings(settings: any) {
     const response = await fetch(`${API_BASE_URL}/settings`, {
       method: 'POST',
