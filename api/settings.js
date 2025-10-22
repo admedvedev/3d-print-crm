@@ -1,4 +1,4 @@
-// API route for users
+// API route for settings
 export default async function handler(req, res) {
   const { method } = req;
   
@@ -16,14 +16,14 @@ export default async function handler(req, res) {
   try {
     switch (method) {
       case 'GET':
-        // Get all users
-        const users = await getUsers();
-        res.status(200).json(users);
+        // Get all settings
+        const settings = await getSettings();
+        res.status(200).json(settings);
         break;
       case 'POST':
-        // Create new user
-        const newUser = await createUser(req.body);
-        res.status(201).json(newUser);
+        // Create new settings
+        const newSettings = await createSettings(req.body);
+        res.status(201).json(newSettings);
         break;
       default:
         res.setHeader('Allow', ['GET', 'POST']);
@@ -35,26 +35,24 @@ export default async function handler(req, res) {
   }
 }
 
-// Mock database functions (replace with real database)
-async function getUsers() {
-  // This would connect to your database
+// Mock database functions
+async function getSettings() {
   return [
     {
       id: "1",
-      email: "andybear@3dcrm.com",
-      password: "pass111word",
-      name: "Администратор",
-      createdAt: "2024-01-01T00:00:00.000Z"
+      userId: "1",
+      electricityRate: 5.5,
+      currency: "₽",
+      defaultMarkup: 20
     }
   ];
 }
 
-async function createUser(userData) {
-  // This would save to your database
-  const newUser = {
+async function createSettings(settingsData) {
+  const newSettings = {
     id: crypto.randomUUID(),
-    ...userData,
+    ...settingsData,
     createdAt: new Date().toISOString()
   };
-  return newUser;
+  return newSettings;
 }

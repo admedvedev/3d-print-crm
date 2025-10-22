@@ -1,5 +1,5 @@
 // Vercel API implementation
-const API_BASE_URL = 'https://3d-print-crm.vercel.app/api';
+const API_BASE_URL = '/api';
 
 export const apiService = {
   // Users

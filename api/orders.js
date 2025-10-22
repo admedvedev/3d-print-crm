@@ -1,4 +1,4 @@
-// API route for users
+// API route for orders
 export default async function handler(req, res) {
   const { method } = req;
   
@@ -16,14 +16,14 @@ export default async function handler(req, res) {
   try {
     switch (method) {
       case 'GET':
-        // Get all users
-        const users = await getUsers();
-        res.status(200).json(users);
+        // Get all orders
+        const orders = await getOrders();
+        res.status(200).json(orders);
         break;
       case 'POST':
-        // Create new user
-        const newUser = await createUser(req.body);
-        res.status(201).json(newUser);
+        // Create new order
+        const newOrder = await createOrder(req.body);
+        res.status(201).json(newOrder);
         break;
       default:
         res.setHeader('Allow', ['GET', 'POST']);
@@ -35,26 +35,35 @@ export default async function handler(req, res) {
   }
 }
 
-// Mock database functions (replace with real database)
-async function getUsers() {
-  // This would connect to your database
+// Mock database functions
+async function getOrders() {
   return [
     {
       id: "1",
-      email: "andybear@3dcrm.com",
-      password: "pass111word",
-      name: "Администратор",
-      createdAt: "2024-01-01T00:00:00.000Z"
+      userId: "1",
+      taskName: "Тестовое задание",
+      clientId: "1",
+      clientName: "Иванов И.И.",
+      printerId: "1",
+      printerName: "Prusa i3 MK3S",
+      filamentId: "1",
+      filamentName: "PLA Базовый",
+      printTimeHours: 2,
+      printTimeMinutes: 30,
+      weight: 50,
+      markup: 20,
+      status: "completed",
+      cost: 1250.5,
+      date: "2024-01-15"
     }
   ];
 }
 
-async function createUser(userData) {
-  // This would save to your database
-  const newUser = {
+async function createOrder(orderData) {
+  const newOrder = {
     id: crypto.randomUUID(),
-    ...userData,
+    ...orderData,
     createdAt: new Date().toISOString()
   };
-  return newUser;
+  return newOrder;
 }

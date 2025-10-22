@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { AppState, Printer, Filament, Client, Order } from "@/types";
-import { apiService } from "@/lib/api-vercel";
+import { getDefaultApiService } from "@/lib/api-switch";
 
 interface AppContextType extends AppState {
   addPrinter: (printer: Omit<Printer, "id">) => void;
@@ -43,9 +43,21 @@ const initialState: AppState = {
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(initialState);
   const [loading, setLoading] = useState(true);
+  const [apiService, setApiService] = useState<any>(null);
+
+  // Инициализируем API service
+  useEffect(() => {
+    const initApi = async () => {
+      const service = await getDefaultApiService();
+      setApiService(service);
+    };
+    initApi();
+  }, []);
 
   // Загружаем данные из API при инициализации
   useEffect(() => {
+    if (!apiService) return;
+    
     const loadData = async () => {
       try {
         setLoading(true);
@@ -76,7 +88,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     loadData();
-  }, []);
+  }, [apiService]);
 
   const calculateOrderCost = ({
     printerId,
@@ -111,6 +123,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const addPrinter = async (printer: Omit<Printer, "id">) => {
+    if (!apiService) return;
     try {
       const newPrinter = await apiService.createPrinter({ ...printer, id: crypto.randomUUID() });
       setState(prev => ({ ...prev, printers: [...prev.printers, newPrinter] }));
@@ -120,6 +133,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updatePrinter = async (id: string, printer: Partial<Printer>) => {
+    if (!apiService) return;
     try {
       const updatedPrinter = await apiService.updatePrinter(id, printer);
       setState(prev => ({
@@ -132,6 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const deletePrinter = async (id: string) => {
+    if (!apiService) return;
     try {
       await apiService.deletePrinter(id);
       setState(prev => ({ ...prev, printers: prev.printers.filter(p => p.id !== id) }));
@@ -141,6 +156,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const addFilament = async (filament: Omit<Filament, "id">) => {
+    if (!apiService) return;
     try {
       const newFilament = await apiService.createFilament({ ...filament, id: crypto.randomUUID() });
       setState(prev => ({ ...prev, filaments: [...prev.filaments, newFilament] }));
@@ -150,6 +166,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updateFilament = async (id: string, filament: Partial<Filament>) => {
+    if (!apiService) return;
     try {
       const updatedFilament = await apiService.updateFilament(id, filament);
       setState(prev => ({
@@ -162,6 +179,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteFilament = async (id: string) => {
+    if (!apiService) return;
     try {
       await apiService.deleteFilament(id);
       setState(prev => ({ ...prev, filaments: prev.filaments.filter(f => f.id !== id) }));
@@ -171,6 +189,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const addClient = async (client: Omit<Client, "id">) => {
+    if (!apiService) return;
     try {
       const newClient = await apiService.createClient({ ...client, id: crypto.randomUUID() });
       setState(prev => ({ ...prev, clients: [...prev.clients, newClient] }));
@@ -180,6 +199,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updateClient = async (id: string, client: Partial<Client>) => {
+    if (!apiService) return;
     try {
       const updatedClient = await apiService.updateClient(id, client);
       setState(prev => ({
@@ -192,6 +212,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteClient = async (id: string) => {
+    if (!apiService) return;
     try {
       await apiService.deleteClient(id);
       setState(prev => ({ ...prev, clients: prev.clients.filter(c => c.id !== id) }));
@@ -201,6 +222,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const addOrder = async (order: Omit<Order, "id">) => {
+    if (!apiService) return;
     try {
       const newOrder = await apiService.createOrder({ ...order, id: crypto.randomUUID() });
       setState(prev => ({ ...prev, orders: [...prev.orders, newOrder] }));
@@ -210,6 +232,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updateOrder = async (id: string, order: Partial<Order>) => {
+    if (!apiService) return;
     try {
       const updatedOrder = await apiService.updateOrder(id, order);
       setState(prev => ({
@@ -222,6 +245,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteOrder = async (id: string) => {
+    if (!apiService) return;
     try {
       await apiService.deleteOrder(id);
       setState(prev => ({ ...prev, orders: prev.orders.filter(o => o.id !== id) }));
@@ -231,6 +255,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updateSettings = async (settings: Partial<Pick<AppState, "electricityRate" | "currency" | "defaultMarkup">>) => {
+    if (!apiService) return;
     try {
       await apiService.updateSettings(settings);
       setState((prev) => ({ ...prev, ...settings }));
@@ -240,6 +265,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const resetToInitialState = async () => {
+    if (!apiService) return;
     try {
       // Очищаем все данные через API
       await Promise.all([

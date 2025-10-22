@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { apiService } from "@/lib/api";
+import { getDefaultApiService } from "@/lib/api-switch";
 
 interface User {
   id: string;
@@ -21,6 +21,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [apiService, setApiService] = useState<any>(null);
+
+  // Инициализируем API service
+  useEffect(() => {
+    const initApi = async () => {
+      const service = await getDefaultApiService();
+      setApiService(service);
+    };
+    initApi();
+  }, []);
 
   // Проверяем сохраненную сессию при загрузке
   useEffect(() => {
@@ -37,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    if (!apiService) return false;
     try {
       setLoading(true);
       const users = await apiService.getUsers();
@@ -58,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
+    if (!apiService) return { success: false, error: "API не инициализирован" };
     try {
       setLoading(true);
       const users = await apiService.getUsers();
