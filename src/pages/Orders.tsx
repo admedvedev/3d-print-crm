@@ -47,8 +47,8 @@ const Orders = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const filteredOrders = orders.filter((order) => {
-    const matchesSearch = order.taskName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         order.clientName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = order.taskName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         order.clientName?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });

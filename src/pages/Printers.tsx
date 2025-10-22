@@ -33,7 +33,7 @@ const Printers = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredPrinters = printers.filter((printer) =>
-    printer.name.toLowerCase().includes(searchQuery.toLowerCase())
+    printer.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleEdit = (printer: Printer) => {

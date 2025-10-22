@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const users = await apiService.getUsers();
       
       // Проверяем, не существует ли уже пользователь с таким email
-      if (users.find((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
+      if (users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase())) {
         return { success: false, error: "Пользователь с таким email уже существует" };
       }
 

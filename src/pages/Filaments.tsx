@@ -32,8 +32,8 @@ const Filaments = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredFilaments = filaments.filter((filament) =>
-    filament.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    filament.color.toLowerCase().includes(searchQuery.toLowerCase())
+    filament.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    filament.color?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleEdit = (filament: Filament) => {
