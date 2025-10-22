@@ -106,10 +106,10 @@ async function createRecord(table, data) {
       if (!user_id || !name || !power || !cost || !depreciation || !total_hours) {
         throw new Error('All fields are required');
       }
-      await sql.query(
-        `INSERT INTO printers (id, user_id, name, power, cost, depreciation, total_hours, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [id, user_id, name, power, cost, depreciation, total_hours, createdAt]
-      );
+      await sql`
+        INSERT INTO printers (id, user_id, name, power, cost, depreciation, total_hours, created_at)
+        VALUES (${id}, ${user_id}, ${name}, ${power}, ${cost}, ${depreciation}, ${total_hours}, ${createdAt})
+      `;
       return { id, user_id, name, power, cost, depreciation, total_hours, created_at: createdAt };
       
     case 'filaments':
@@ -117,10 +117,10 @@ async function createRecord(table, data) {
       if (!f_user_id || !f_name || !weight || !f_cost || !color) {
         throw new Error('All required fields must be provided');
       }
-      await sql.query(
-        `INSERT INTO filaments (id, user_id, name, weight, cost, color, in_stock, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [id, f_user_id, f_name, weight, f_cost, color, in_stock !== undefined ? in_stock : true, createdAt]
-      );
+      await sql`
+        INSERT INTO filaments (id, user_id, name, weight, cost, color, in_stock, created_at)
+        VALUES (${id}, ${f_user_id}, ${f_name}, ${weight}, ${f_cost}, ${color}, ${in_stock !== undefined ? in_stock : true}, ${createdAt})
+      `;
       return { id, user_id: f_user_id, name: f_name, weight, cost: f_cost, color, in_stock: in_stock !== undefined ? in_stock : true, created_at: createdAt };
       
     case 'clients':
@@ -128,10 +128,10 @@ async function createRecord(table, data) {
       if (!c_user_id || !c_name || !email || !phone) {
         throw new Error('All fields are required');
       }
-      await sql.query(
-        `INSERT INTO clients (id, user_id, name, email, phone, created_at) VALUES ($1, $2, $3, $4, $5, $6)`,
-        [id, c_user_id, c_name, email, phone, createdAt]
-      );
+      await sql`
+        INSERT INTO clients (id, user_id, name, email, phone, created_at)
+        VALUES (${id}, ${c_user_id}, ${c_name}, ${email}, ${phone}, ${createdAt})
+      `;
       return { id, user_id: c_user_id, name: c_name, email, phone, created_at: createdAt };
       
     case 'orders':
@@ -145,10 +145,18 @@ async function createRecord(table, data) {
           !o_weight || !markup || !status || !o_cost || !date) {
         throw new Error('All fields are required');
       }
-      await sql.query(
-        `INSERT INTO orders (id, user_id, task_name, client_id, client_name, printer_id, printer_name, filament_id, filament_name, print_time_hours, print_time_minutes, weight, markup, status, cost, date, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
-        [id, o_user_id, task_name, client_id, client_name, printer_id, printer_name, filament_id, filament_name, print_time_hours, print_time_minutes, o_weight, markup, status, o_cost, date, createdAt]
-      );
+      await sql`
+        INSERT INTO orders (
+          id, user_id, task_name, client_id, client_name, printer_id, printer_name, 
+          filament_id, filament_name, print_time_hours, print_time_minutes, weight, 
+          markup, status, cost, date, created_at
+        )
+        VALUES (
+          ${id}, ${o_user_id}, ${task_name}, ${client_id}, ${client_name}, ${printer_id}, ${printer_name}, 
+          ${filament_id}, ${filament_name}, ${print_time_hours}, ${print_time_minutes}, ${o_weight}, 
+          ${markup}, ${status}, ${o_cost}, ${date}, ${createdAt}
+        )
+      `;
       return { 
         id, user_id: o_user_id, task_name, client_id, client_name, printer_id, printer_name, 
         filament_id, filament_name, print_time_hours, print_time_minutes, weight: o_weight, 
@@ -160,10 +168,10 @@ async function createRecord(table, data) {
       if (!s_user_id || !electricity_rate || !currency || !default_markup) {
         throw new Error('All fields are required');
       }
-      await sql.query(
-        `INSERT INTO settings (id, user_id, electricity_rate, currency, default_markup, created_at) VALUES ($1, $2, $3, $4, $5, $6)`,
-        [id, s_user_id, electricity_rate, currency, default_markup, createdAt]
-      );
+      await sql`
+        INSERT INTO settings (id, user_id, electricity_rate, currency, default_markup, created_at)
+        VALUES (${id}, ${s_user_id}, ${electricity_rate}, ${currency}, ${default_markup}, ${createdAt})
+      `;
       return { id, user_id: s_user_id, electricity_rate, currency, default_markup, created_at: createdAt };
       
     default:
@@ -173,37 +181,46 @@ async function createRecord(table, data) {
 
 // Функция обновления записи
 async function updateRecord(table, id, data) {
+  // Простое обновление для каждой таблицы
   switch (table) {
     case 'users':
       const { email, password, name } = data;
-      const userResult = await sql.query(
-        `UPDATE users SET email = $1, password = $2, name = $3 WHERE id = $4 RETURNING *`,
-        [email, password, name, id]
-      );
+      const userResult = await sql`
+        UPDATE users 
+        SET email = ${email}, password = ${password}, name = ${name}
+        WHERE id = ${id}
+        RETURNING *
+      `;
       return userResult.rows.length > 0 ? userResult.rows[0] : null;
       
     case 'printers':
       const { user_id, name: p_name, power, cost, depreciation, total_hours } = data;
-      const printerResult = await sql.query(
-        `UPDATE printers SET user_id = $1, name = $2, power = $3, cost = $4, depreciation = $5, total_hours = $6 WHERE id = $7 RETURNING *`,
-        [user_id, p_name, power, cost, depreciation, total_hours, id]
-      );
+      const printerResult = await sql`
+        UPDATE printers 
+        SET user_id = ${user_id}, name = ${p_name}, power = ${power}, cost = ${cost}, depreciation = ${depreciation}, total_hours = ${total_hours}
+        WHERE id = ${id}
+        RETURNING *
+      `;
       return printerResult.rows.length > 0 ? printerResult.rows[0] : null;
       
     case 'filaments':
       const { user_id: f_user_id, name: f_name, weight, cost: f_cost, color, in_stock } = data;
-      const filamentResult = await sql.query(
-        `UPDATE filaments SET user_id = $1, name = $2, weight = $3, cost = $4, color = $5, in_stock = $6 WHERE id = $7 RETURNING *`,
-        [f_user_id, f_name, weight, f_cost, color, in_stock, id]
-      );
+      const filamentResult = await sql`
+        UPDATE filaments 
+        SET user_id = ${f_user_id}, name = ${f_name}, weight = ${weight}, cost = ${f_cost}, color = ${color}, in_stock = ${in_stock}
+        WHERE id = ${id}
+        RETURNING *
+      `;
       return filamentResult.rows.length > 0 ? filamentResult.rows[0] : null;
       
     case 'clients':
       const { user_id: c_user_id, name: c_name, email, phone } = data;
-      const clientResult = await sql.query(
-        `UPDATE clients SET user_id = $1, name = $2, email = $3, phone = $4 WHERE id = $5 RETURNING *`,
-        [c_user_id, c_name, email, phone, id]
-      );
+      const clientResult = await sql`
+        UPDATE clients 
+        SET user_id = ${c_user_id}, name = ${c_name}, email = ${email}, phone = ${phone}
+        WHERE id = ${id}
+        RETURNING *
+      `;
       return clientResult.rows.length > 0 ? clientResult.rows[0] : null;
       
     case 'orders':
@@ -212,18 +229,26 @@ async function updateRecord(table, id, data) {
         filament_id, filament_name, print_time_hours, print_time_minutes, 
         weight: o_weight, markup, status, cost: o_cost, date 
       } = data;
-      const orderResult = await sql.query(
-        `UPDATE orders SET user_id = $1, task_name = $2, client_id = $3, client_name = $4, printer_id = $5, printer_name = $6, filament_id = $7, filament_name = $8, print_time_hours = $9, print_time_minutes = $10, weight = $11, markup = $12, status = $13, cost = $14, date = $15 WHERE id = $16 RETURNING *`,
-        [o_user_id, task_name, client_id, client_name, printer_id, printer_name, filament_id, filament_name, print_time_hours, print_time_minutes, o_weight, markup, status, o_cost, date, id]
-      );
+      const orderResult = await sql`
+        UPDATE orders 
+        SET user_id = ${o_user_id}, task_name = ${task_name}, client_id = ${client_id}, client_name = ${client_name}, 
+            printer_id = ${printer_id}, printer_name = ${printer_name}, filament_id = ${filament_id}, 
+            filament_name = ${filament_name}, print_time_hours = ${print_time_hours}, 
+            print_time_minutes = ${print_time_minutes}, weight = ${o_weight}, markup = ${markup}, 
+            status = ${status}, cost = ${o_cost}, date = ${date}
+        WHERE id = ${id}
+        RETURNING *
+      `;
       return orderResult.rows.length > 0 ? orderResult.rows[0] : null;
       
     case 'settings':
       const { user_id: s_user_id, electricity_rate, currency, default_markup } = data;
-      const settingsResult = await sql.query(
-        `UPDATE settings SET user_id = $1, electricity_rate = $2, currency = $3, default_markup = $4 WHERE id = $5 RETURNING *`,
-        [s_user_id, electricity_rate, currency, default_markup, id]
-      );
+      const settingsResult = await sql`
+        UPDATE settings 
+        SET user_id = ${s_user_id}, electricity_rate = ${electricity_rate}, currency = ${currency}, default_markup = ${default_markup}
+        WHERE id = ${id}
+        RETURNING *
+      `;
       return settingsResult.rows.length > 0 ? settingsResult.rows[0] : null;
       
     default:
