@@ -257,7 +257,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateSettings = async (settings: Partial<Pick<AppState, "electricityRate" | "currency" | "defaultMarkup">>) => {
     if (!apiService) return;
     try {
-      await apiService.updateSettings(settings);
+      // Добавляем user_id к настройкам
+      const settingsWithUserId = {
+        ...settings,
+        user_id: state.user?.id || '1'
+      };
+      await apiService.updateSettings(settingsWithUserId);
       setState((prev) => ({ ...prev, ...settings }));
     } catch (error) {
       console.error('Ошибка обновления настроек:', error);
@@ -277,9 +282,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       
       // Сбрасываем настройки
       await apiService.updateSettings({
-        electricityRate: 5.5,
+        user_id: state.user?.id || '1',
+        electricity_rate: 5.5,
         currency: "₽",
-        defaultMarkup: 20,
+        default_markup: 20,
       });
       
       setState(initialState);
