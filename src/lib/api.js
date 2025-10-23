@@ -34,7 +34,33 @@ class ApiService {
 
   // Users
   async getUsers() {
-    return this.getData('users');
+    let users = this.getData('users');
+    
+    // Initialize default users if empty
+    if (users.length === 0) {
+      const defaultUsers = [
+        {
+          id: '1',
+          email: 'andybear@3dcrm.com',
+          password: 'pass111word',
+          name: 'Администратор',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          email: 'admin@3dcrm.com',
+          password: 'pass1111word',
+          name: 'Админ',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ];
+      this.setData('users', defaultUsers);
+      users = defaultUsers;
+    }
+    
+    return users;
   }
 
   async createUser(user) {
