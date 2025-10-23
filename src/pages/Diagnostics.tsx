@@ -22,15 +22,25 @@ const Diagnostics = () => {
     const results = { ...diagnostics };
 
     // 1. Проверка окружения
+    const allEnvVars = {};
+    Object.keys(import.meta.env).forEach(key => {
+      if (key.includes('SUPABASE') || key.includes('POSTGRES')) {
+        allEnvVars[key] = import.meta.env[key] ? 'Set' : 'Not set';
+      }
+    });
+
     results.environment = {
       mode: import.meta.env.MODE,
-      supabaseUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Not set',
-      supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set'
+      nextPublicUrl: import.meta.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Not set',
+      nextPublicKey: import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Set' : 'Not set',
+      viteUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Not set',
+      viteKey: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set',
+      allVars: allEnvVars
     };
 
     // 2. Проверка конфигурации Supabase
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
     
     results.supabaseConfig = {
       url: supabaseUrl,
@@ -118,13 +128,34 @@ const Diagnostics = () => {
               <Badge variant="outline">{diagnostics.environment?.mode || 'Unknown'}</Badge>
             </div>
             <div className="flex justify-between">
-              <span>Supabase URL:</span>
-              {getStatusBadge(diagnostics.environment?.supabaseUrl)}
+              <span>NEXT_PUBLIC_URL:</span>
+              {getStatusBadge(diagnostics.environment?.nextPublicUrl)}
             </div>
             <div className="flex justify-between">
-              <span>Supabase Key:</span>
-              {getStatusBadge(diagnostics.environment?.supabaseKey)}
+              <span>NEXT_PUBLIC_KEY:</span>
+              {getStatusBadge(diagnostics.environment?.nextPublicKey)}
             </div>
+            <div className="flex justify-between">
+              <span>VITE_URL:</span>
+              {getStatusBadge(diagnostics.environment?.viteUrl)}
+            </div>
+            <div className="flex justify-between">
+              <span>VITE_KEY:</span>
+              {getStatusBadge(diagnostics.environment?.viteKey)}
+            </div>
+            {diagnostics.environment?.allVars && Object.keys(diagnostics.environment.allVars).length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2">Все переменные окружения:</h4>
+                <div className="space-y-1">
+                  {Object.entries(diagnostics.environment.allVars).map(([key, value]) => (
+                    <div key={key} className="flex justify-between text-xs">
+                      <span className="font-mono">{key}:</span>
+                      {getStatusBadge(value)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -219,7 +250,7 @@ const Diagnostics = () => {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Supabase не настроен. Настройте переменные окружения VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в Vercel.
+                  Supabase не настроен. Настройте переменные окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY в Vercel.
                 </AlertDescription>
               </Alert>
             ) : !diagnostics.supabaseConnection?.success ? (

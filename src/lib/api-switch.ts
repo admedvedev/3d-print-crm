@@ -2,8 +2,8 @@
 export async function getApiService() {
   // Проверяем, настроен ли Supabase
   const isSupabaseConfigured = () => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
     
     // Отладочная информация
     console.log('Supabase URL:', supabaseUrl);

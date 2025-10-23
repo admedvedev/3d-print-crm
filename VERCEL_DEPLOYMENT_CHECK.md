@@ -9,8 +9,8 @@
 3. **Выберите проект `3d-print-crm`**
 4. **Перейдите в Settings → Environment Variables**
 5. **Убедитесь, что есть переменные:**
-   - `VITE_SUPABASE_URL` = ваш Project URL (начинается с `https://`)
-   - `VITE_SUPABASE_ANON_KEY` = ваш anon public key (начинается с `eyJ`)
+   - `NEXT_PUBLIC_SUPABASE_URL` = ваш Project URL (начинается с `https://`)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = ваш anon public key (начинается с `eyJ`)
 
 ### 2. Принудительное переразвертывание
 
