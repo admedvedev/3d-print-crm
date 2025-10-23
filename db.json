@@ -6,6 +6,13 @@
       "password": "pass111word",
       "name": "Администратор",
       "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "8c6d6be8-1bbd-42e0-8713-9d6aa8789ea5",
+      "email": "I@andybear.ru",
+      "password": "1!Qwerty",
+      "name": "Андрей",
+      "createdAt": "2025-10-22T20:42:58.725Z"
     }
   ],
   "printers": [
