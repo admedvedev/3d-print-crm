@@ -15,7 +15,9 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "node api/init-db.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
