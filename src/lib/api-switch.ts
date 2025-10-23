@@ -4,10 +4,15 @@ const isVercel = process.env.VERCEL === '1';
 
 // Choose API implementation based on environment
 export async function getApiService() {
-  // Временно используем JSON Server для всех сред
-  // Позже можно переключиться на Prisma когда настроите базу данных
-  const { apiService } = await import('./api');
-  return apiService;
+  if (isProduction || isVercel) {
+    // Use Vercel API for production
+    const { apiService } = await import('./api-prisma');
+    return apiService;
+  } else {
+    // Use local JSON Server for development
+    const { apiService } = await import('./api');
+    return apiService;
+  }
 }
 
 // For backward compatibility, create a default instance
