@@ -1,8 +1,22 @@
-// Simple API switching - always use JSON Server
+// API Switch - выбирает правильный API в зависимости от окружения
 export async function getApiService() {
-  // Always use JSON Server for simplicity
-  const { apiService } = await import('./api');
-  return apiService;
+  // Проверяем, настроен ли Supabase
+  const isSupabaseConfigured = () => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    return supabaseUrl && supabaseKey && 
+           supabaseUrl !== 'https://your-project.supabase.co' && 
+           supabaseKey !== 'your-anon-key';
+  };
+
+  // Используем Supabase если настроен, иначе localStorage
+  if (isSupabaseConfigured()) {
+    const { apiService } = await import('./api-supabase');
+    return apiService;
+  } else {
+    const { apiService } = await import('./api');
+    return apiService;
+  }
 }
 
 // For backward compatibility, create a default instance
