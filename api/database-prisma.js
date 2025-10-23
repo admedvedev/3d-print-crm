@@ -1,6 +1,31 @@
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+// Initialize Prisma with error handling
+let prisma;
+try {
+  prisma = new PrismaClient();
+} catch (error) {
+  console.error('Failed to initialize Prisma:', error);
+  prisma = null;
+}
+
+// Fallback in-memory storage
+let fallbackData = {
+  users: [
+    {
+      id: '1',
+      email: 'andybear@3dcrm.com',
+      password: 'pass111word',
+      name: 'Администратор',
+      createdAt: new Date().toISOString()
+    }
+  ],
+  printers: [],
+  filaments: [],
+  clients: [],
+  orders: [],
+  settings: []
+};
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -24,6 +49,12 @@ export default async function handler(req, res) {
       error: 'Invalid table name', 
       validTables: validTables 
     });
+  }
+
+  // Check if Prisma is available, otherwise use fallback
+  if (!prisma) {
+    console.log('Using fallback in-memory storage');
+    return handleFallbackRequest(req, res, table, id, method);
   }
 
   try {
@@ -190,4 +221,79 @@ async function deleteRecord(table, id) {
     default:
       return false;
   }
+}
+
+// Fallback handler for when Prisma is not available
+function handleFallbackRequest(req, res, table, id, method) {
+  try {
+    switch (method) {
+      case 'GET':
+        if (id) {
+          const record = fallbackData[table].find(item => item.id === id);
+          if (!record) {
+            return res.status(404).json({ error: `${table} not found` });
+          }
+          res.status(200).json(record);
+        } else {
+          res.status(200).json(fallbackData[table]);
+        }
+        break;
+        
+      case 'POST':
+        const newRecord = {
+          id: generateId(),
+          ...req.body,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        fallbackData[table].push(newRecord);
+        res.status(201).json(newRecord);
+        break;
+        
+      case 'PUT':
+        if (!id) {
+          return res.status(400).json({ error: 'ID is required for update' });
+        }
+        const index = fallbackData[table].findIndex(item => item.id === id);
+        if (index === -1) {
+          return res.status(404).json({ error: `${table} not found` });
+        }
+        fallbackData[table][index] = {
+          ...fallbackData[table][index],
+          ...req.body,
+          updatedAt: new Date().toISOString()
+        };
+        res.status(200).json(fallbackData[table][index]);
+        break;
+        
+      case 'DELETE':
+        if (!id) {
+          return res.status(400).json({ error: 'ID is required for deletion' });
+        }
+        const deleteIndex = fallbackData[table].findIndex(item => item.id === id);
+        if (deleteIndex === -1) {
+          return res.status(404).json({ error: `${table} not found` });
+        }
+        fallbackData[table].splice(deleteIndex, 1);
+        res.status(200).json({ success: true });
+        break;
+        
+      default:
+        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+        res.status(405).end(`Method ${method} Not Allowed`);
+    }
+  } catch (error) {
+    console.error('Fallback API Error:', error);
+    res.status(500).json({ 
+      error: 'Internal Server Error',
+      details: error.message,
+      table: table,
+      method: method
+    });
+  }
+}
+
+// Helper function to generate unique IDs
+function generateId() {
+  return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
 }
