@@ -7,6 +7,7 @@ import {
   Cylinder,
   Users,
   Settings,
+  Bug,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -45,6 +46,11 @@ const menuItems = [
     title: "Настройки",
     url: "/settings",
     icon: Settings,
+  },
+  {
+    title: "Диагностика",
+    url: "/diagnostics",
+    icon: Bug,
   },
 ];
 

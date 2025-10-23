@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import { PageProvider } from "@/context/PageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthPage } from "@/components/auth/AuthPage";
+import { testSupabaseConnection } from "@/lib/test-connection";
 import Dashboard from "./pages/Dashboard";
 import Calculator from "./pages/Calculator";
 import Orders from "./pages/Orders";
@@ -16,6 +18,7 @@ import Printers from "./pages/Printers";
 import Filaments from "./pages/Filaments";
 import Clients from "./pages/Clients";
 import Settings from "./pages/Settings";
+import Diagnostics from "./pages/Diagnostics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +38,7 @@ const AppRoutes = () => (
               <Route path="/filaments" element={<Filaments />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/diagnostics" element={<Diagnostics />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
@@ -44,20 +48,27 @@ const AppRoutes = () => (
   </BrowserRouter>
 );
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <AppProvider>
-        <PageProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <AppRoutes />
-          </TooltipProvider>
-        </PageProvider>
-      </AppProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Тестируем подключение к Supabase при загрузке
+  React.useEffect(() => {
+    testSupabaseConnection();
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppProvider>
+          <PageProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
+            </TooltipProvider>
+          </PageProvider>
+        </AppProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
