@@ -5,8 +5,8 @@ const isVercel = process.env.VERCEL === '1';
 // Choose API implementation based on environment
 export async function getApiService() {
   if (isProduction || isVercel) {
-    // Use Vercel API for production
-    const { apiService } = await import('./api-prisma');
+    // Use persistent Vercel API for production
+    const { apiService } = await import('./api-persistent');
     return apiService;
   } else {
     // Use local JSON Server for development
