@@ -14,9 +14,9 @@ export async function debugSupabaseConnection() {
   
   console.table(allEnvVars)
   
-  // 2. Проверяем конкретные переменные Supabase
-  const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL
-  const supabaseKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY
+  // 2. Проверяем конкретные переменные Supabase (приоритет VITE_ для Vite проектов)
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   console.log('🔗 ПЕРЕМЕННЫЕ SUPABASE:')
   console.log('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl)

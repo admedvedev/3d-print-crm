@@ -38,9 +38,9 @@ const Diagnostics = () => {
       allVars: allEnvVars
     };
 
-    // 2. Проверка конфигурации Supabase
-    const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+    // 2. Проверка конфигурации Supabase (приоритет VITE_ для Vite проектов)
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
     results.supabaseConfig = {
       url: supabaseUrl,

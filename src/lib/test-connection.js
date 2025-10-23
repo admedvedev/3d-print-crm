@@ -5,9 +5,9 @@ export async function testSupabaseConnection() {
   try {
     console.log('🔍 Тестируем подключение к Supabase...')
     
-    // Проверяем переменные окружения (поддерживаем оба варианта)
-    const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL
-    const supabaseKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY
+    // Проверяем переменные окружения (приоритет VITE_ для Vite проектов)
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
     console.log('📋 Переменные окружения:')
     console.log('NEXT_PUBLIC_SUPABASE_URL:', import.meta.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Настроен' : '❌ Не настроен')

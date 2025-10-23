@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Используем правильные переменные окружения
-const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co'
-const supabaseKey = import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key'
+// Используем переменные окружения (приоритет VITE_ для Vite проектов)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co'
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
 
 // Диагностика переменных окружения
 console.log('🔍 Supabase Configuration:')
