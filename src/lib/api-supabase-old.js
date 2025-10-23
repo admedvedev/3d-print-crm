@@ -43,6 +43,7 @@ class SupabaseApiService {
   }
 
   async createUser(user) {
+    // Преобразуем camelCase в snake_case для Supabase
     const userData = {
       email: user.email,
       password: user.password,
@@ -78,6 +79,7 @@ class SupabaseApiService {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const printerData = {
       user_id: userId,
       name: printer.name,
@@ -94,13 +96,14 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async updatePrinter(id, printer) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const printerData = {
       name: printer.name,
       power: printer.power,
@@ -118,7 +121,7 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async deletePrinter(id) {
@@ -147,13 +150,14 @@ class SupabaseApiService {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return this.convertToCamelCase(data || []);
+    return data || [];
   }
 
   async createFilament(filament) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const filamentData = {
       user_id: userId,
       name: filament.name,
@@ -170,13 +174,14 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async updateFilament(id, filament) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const filamentData = {
       name: filament.name,
       weight: filament.weight,
@@ -194,7 +199,7 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async deleteFilament(id) {
@@ -223,13 +228,14 @@ class SupabaseApiService {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return this.convertToCamelCase(data || []);
+    return data || [];
   }
 
   async createClient(client) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const clientData = {
       user_id: userId,
       name: client.name,
@@ -244,13 +250,14 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async updateClient(id, client) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const clientData = {
       name: client.name,
       email: client.email,
@@ -266,7 +273,7 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async deleteClient(id) {
@@ -295,13 +302,14 @@ class SupabaseApiService {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return this.convertToCamelCase(data || []);
+    return data || [];
   }
 
   async createOrder(order) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const orderData = {
       user_id: userId,
       task_name: order.taskName,
@@ -327,13 +335,14 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async updateOrder(id, order) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const orderData = {
       task_name: order.taskName,
       client_id: order.clientId,
@@ -360,7 +369,7 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async deleteOrder(id) {
@@ -389,13 +398,14 @@ class SupabaseApiService {
       .single();
     
     if (error && error.code !== 'PGRST116') throw error;
-    return this.convertToCamelCase(data) || { electricityRate: 5.5, currency: "₽", defaultMarkup: 20 };
+    return data || { electricityRate: 5.5, currency: "₽", defaultMarkup: 20 };
   }
 
   async createSettings(settings) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const settingsData = {
       user_id: userId,
       electricity_rate: settings.electricityRate,
@@ -410,13 +420,14 @@ class SupabaseApiService {
       .single();
     
     if (error) throw error;
-    return this.convertToCamelCase(data);
+    return data;
   }
 
   async updateSettings(settings) {
     const userId = this.getCurrentUserId();
     if (!userId) throw new Error('User not authenticated');
     
+    // Преобразуем camelCase в snake_case для Supabase
     const settingsData = {
       electricity_rate: settings.electricityRate,
       currency: settings.currency,
@@ -440,7 +451,7 @@ class SupabaseApiService {
         .single();
       
       if (error) throw error;
-      return this.convertToCamelCase(data);
+      return data;
     } else {
       // Создаем новые настройки
       return this.createSettings(settings);
