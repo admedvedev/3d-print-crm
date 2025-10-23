@@ -1,18 +1,8 @@
-// Automatic API switching based on environment
-const isProduction = process.env.NODE_ENV === 'production';
-const isVercel = process.env.VERCEL === '1';
-
-// Choose API implementation based on environment
+// Simple API switching - always use JSON Server
 export async function getApiService() {
-  if (isProduction || isVercel) {
-    // Use Prisma API for production with Vercel Postgres
-    const { apiService } = await import('./api-prisma');
-    return apiService;
-  } else {
-    // Use local JSON Server for development
-    const { apiService } = await import('./api');
-    return apiService;
-  }
+  // Always use JSON Server for simplicity
+  const { apiService } = await import('./api');
+  return apiService;
 }
 
 // For backward compatibility, create a default instance
