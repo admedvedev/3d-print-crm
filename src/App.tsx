@@ -11,6 +11,9 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthPage } from "@/components/auth/AuthPage";
 import { testSupabaseConnection } from "@/lib/test-connection";
+import { debugSupabaseConnection } from "@/lib/debug-connection";
+import { testApiService } from "@/lib/test-api-service";
+import { testEnvironmentVariables } from "@/lib/test-env-vars";
 import Dashboard from "./pages/Dashboard";
 import Calculator from "./pages/Calculator";
 import Orders from "./pages/Orders";
@@ -51,7 +54,18 @@ const AppRoutes = () => (
 const App = () => {
   // Тестируем подключение к Supabase при загрузке
   React.useEffect(() => {
-    testSupabaseConnection();
+    console.log('🚀 Запуск полной диагностики...');
+    
+    // Сначала тестируем переменные окружения
+    testEnvironmentVariables();
+    
+    // Затем тестируем Supabase
+    debugSupabaseConnection();
+    
+    // Тестируем API service через 3 секунды
+    setTimeout(() => {
+      testApiService();
+    }, 3000);
   }, []);
 
   return (
