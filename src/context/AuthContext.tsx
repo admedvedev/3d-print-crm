@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getDefaultApiService } from "@/lib/api-switch";
+import { authService } from "@/lib/auth-supabase";
 
 interface User {
   id: string;
@@ -34,29 +35,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Проверяем сохраненную сессию при загрузке
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = authService.getCurrentUser();
     if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error('Ошибка загрузки пользователя:', error);
-        localStorage.removeItem('user');
-      }
+      const { password: _, ...userWithoutPassword } = savedUser;
+      setUser(userWithoutPassword);
     }
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    if (!apiService) return false;
     try {
       setLoading(true);
-      const users = await apiService.getUsers();
-      const foundUser = users.find((u: any) => u.email === email && u.password === password);
+      const user = await authService.login(email, password);
       
-      if (foundUser) {
-        const { password: _, ...userWithoutPassword } = foundUser;
+      if (user) {
+        const { password: _, ...userWithoutPassword } = user;
         setUser(userWithoutPassword);
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
         return true;
       }
       return false;
@@ -69,90 +63,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (email: string, password: string, name: string): Promise<{ success: boolean; error?: string }> => {
-    if (!apiService) return { success: false, error: "API не инициализирован" };
     try {
       setLoading(true);
-      const users = await apiService.getUsers();
+      const user = await authService.register(email, password, name);
       
-      // Проверяем, не существует ли уже пользователь с таким email
-      if (users.find((u: any) => u.email?.toLowerCase() === email.toLowerCase())) {
-        return { success: false, error: "Пользователь с таким email уже существует" };
+      if (user) {
+        const { password: _, ...userWithoutPassword } = user;
+        setUser(userWithoutPassword);
+        
+        // Создаем начальные данные для нового пользователя
+        if (apiService) {
+          try {
+            await apiService.createSettings({
+              electricityRate: 5.5,
+              currency: "₽",
+              defaultMarkup: 20,
+            });
+          } catch (error) {
+            console.warn('Не удалось создать настройки для нового пользователя:', error);
+          }
+        }
+        
+        return { success: true };
       }
-
-      const newUser = {
-        id: crypto.randomUUID(),
-        email,
-        password,
-        name,
-        createdAt: new Date().toISOString(),
-      };
-
-      await apiService.createUser(newUser);
-      
-      // Создаем начальные данные для нового пользователя
-      await Promise.all([
-        apiService.createSettings({
-          id: crypto.randomUUID(),
-          userId: newUser.id,
-          electricityRate: 5.5,
-          currency: "₽",
-          defaultMarkup: 20,
-        }),
-        apiService.createPrinter({
-          id: crypto.randomUUID(),
-          userId: newUser.id,
-          name: "Prusa i3 MK3S",
-          power: 220,
-          cost: 25000,
-          depreciation: 10,
-          totalHours: 150,
-        }),
-        apiService.createFilament({
-          id: crypto.randomUUID(),
-          userId: newUser.id,
-          name: "PLA Базовый",
-          weight: 1,
-          cost: 800,
-          color: "#FF6B6B",
-          inStock: true,
-        }),
-        apiService.createClient({
-          id: crypto.randomUUID(),
-          userId: newUser.id,
-          name: "Иванов И.И.",
-          email: "ivanov@example.com",
-          phone: "+7 (999) 123-45-67",
-        }),
-      ]);
-
-      const { password: _, ...userWithoutPassword } = newUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      return { success: true };
+      return { success: false, error: "Ошибка регистрации" };
     } catch (error) {
       console.error('Ошибка регистрации:', error);
-      return { success: false, error: "Произошла ошибка при регистрации. Попробуйте еще раз." };
+      return { success: false, error: error.message || "Ошибка регистрации" };
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
+    authService.logout();
     setUser(null);
-    localStorage.removeItem('user');
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    user,
+    login,
+    register,
+    logout,
+    loading,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-};
+}
